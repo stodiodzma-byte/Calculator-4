@@ -22,21 +22,11 @@ jobs:
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
         pip3 install --user --upgrade buildozer cython virtualenv
 
-    - name: Accept Android SDK Licenses Officially
+    - name: Build with Buildozer (Clean Start)
       run: |
         export PATH=$PATH:~/.local/bin
-        # تشغيل الأداة وجعلها توافق تلقائياً على كل شيء لمنع التوقف
-        mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-        # هذا الأمر يمرر الموافقة التلقائية لـ buildozer
-        yes | buildozer android debug || true
-        if [ -d "~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin" ]; then
-          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-        fi
-
-    - name: Actual Build with Buildozer
-      run: |
-        export PATH=$PATH:~/.local/bin
-        yes | buildozer android debug
+        # البناء المباشر والـ Spec الحالي سيتولى رخص جوجل تلقائياً
+        buildozer android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
