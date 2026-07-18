@@ -1,229 +1,145 @@
-import tkinter as tk
-from tkinter import messagebox
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.clock import Clock
+from kivy.core.window import Window
 import webbrowser
-import random
 
-# --- إعدادات النافذة الرئيسية ---
-app = tk.Tk()
-app.title("آلة حاسبة ZARD - بايثون")
-app.geometry("380x600")
-app.configure(bg="black")
+# إعدادات ألوان الخلفية وحجم الشاشة الافتراضي
+Window.clearcolor = (0, 0, 0, 1)
 
-# ----------------------------------------------------
-# --- شاشة الترحيب والتعريف (Splash Screen) ---
-# ----------------------------------------------------
-splash_frame = tk.Frame(app, bg="black")
-splash_frame.place(relwidth=1, relheight=1)
-
-# اسم الآلة الحاسبة
-title_label = tk.Label(
-    splash_frame, 
-    text="ZARD CALCULATOR", 
-    font=("Arial", 24, "bold"), 
-    bg="black", 
-    fg="#ff4757"  # أحمر نيون
-)
-title_label.pack(pady=(180, 10))
-
-# تم التطوير من قبل zard
-dev_label = tk.Label(
-    splash_frame, 
-    text="تم التطوير من قبل ZARD", 
-    font=("Arial", 16, "bold"), 
-    bg="black", 
-    fg="white"
-)
-dev_label.pack(pady=10)
-
-# Made with Pydroid 3
-made_label = tk.Label(
-    splash_frame, 
-    text="Made with Pydroid 3", 
-    font=("Arial", 12, "italic"), 
-    bg="black", 
-    fg="#535c68"  # رمادي هادي
-)
-made_label.pack(pady=10)
-
-# دالة لإخفاء شاشة الترحيب وإظهار الآلة الحاسبة
-def start_calculator():
-    splash_frame.destroy()  # حذف شاشة الترحيب
-    show_main_calculator()  # بناء واجهة الآلة الحاسبة
-
-# ----------------------------------------------------
-
-# --- متغيرات التحكم للآلة الحاسبة ---
-expression = ""
-equation = tk.StringVar()
-
-def press(num):
-    global expression
-    expression = expression + str(num)
-    equation.set(expression)
-
-def equalpress():
-    try:
-        global expression
+class ZardCalculatorApp(App):
+    def build(self):
+        self.title = "آلة حاسبة ZARD"
+        self.expression = ""
         
-        # ميم الـ 67 الأسطوري
-        if expression == "67":
-            equation.set("67...")
-            app.update()
-            webbrowser.open("https://youtube.com/shorts/9pnpI-7YmV4?si=r7TnnVZlw10MNosa")
-            clear()
-            return
-
-        # 1. رقم 1 -> فتح صورة جوجل درايف
-        elif expression == "1":
-            equation.set("جاري فتح الصورة...")
-            app.update()
-            webbrowser.open("https://drive.google.com/file/d/1f9epdADrjGfqvbWRNvnu0bMEzoVQtLBE/view?usp=drivesdk")
-            clear()
-            return
-            
-        # 2. رقم 2 -> رسالة الاشتراك
-        elif expression == "2":
-            equation.set("Subscribe to Zard")
-            expression = "" 
-            return
-            
-        # 3. رقم 3 -> لعبة فلابي بيرد
-        elif expression == "3":
-            equation.set("برجاء الانتظار...")
-            app.update()
-            webbrowser.open("https://flappybird.io/")
-            clear()
-            return
-            
-        # 4. رقم 4 -> لعبة ماريو
-        elif expression == "4":
-            equation.set("جاري فتح ماريو...")
-            app.update()
-            webbrowser.open("https://supermarioplay.com/")
-            clear()
-            return
-            
-        # 5. رقم 5 -> لعبة سونيك بجميع أجزائها
-        elif expression == "5":
-            equation.set("جاري فتح سونيك...")
-            app.update()
-            webbrowser.open("https://www.retrogames.cc/sega-games/sonic-the-hedgehog-usa-europe.html")
-            clear()
-            return
-            
-        # 6. رقم 6 -> لعبة باك مان
-        elif expression == "6":
-            equation.set("جاري فتح باك مان...")
-            app.update()
-            webbrowser.open("https://www.google.com/fbx?fbx=pacman")
-            clear()
-            return
-            
-        # 7. رقم 7 -> لعبة تيتريس (Tetris)
-        elif expression == "7":
-            equation.set("جاري فتح تيتريس...")
-            app.update()
-            webbrowser.open("https://tetris.com/play-tetris")
-            clear()
-            return
-            
-        # 8. رقم 8 -> لعبة البنات السريعة على Poki
-        elif expression == "8":
-            equation.set("جاري فتح لعبة البنات...")
-            app.update()
-            webbrowser.open("https://poki.com/en/g/dress-up-the-lovely-princess")
-            clear()
-            return
-            
-        # 9. رقم 9 -> لعبة كرة قدم (Penalty Shooters لضربات الجزاء)
-        elif expression == "9":
-            equation.set("جاري فتح لعبة كرة القدم...")
-            app.update()
-            webbrowser.open("https://www.crazygames.com/game/penalty-shooters-2")
-            clear()
-            return
-            
-        # 10. رقم 0 -> لعبة شوتر وحرب 3D أسطورية على Poki
-        elif expression == "0":
-            equation.set("جاري فتح لعبة الشوتر...")
-            app.update()
-            webbrowser.open("https://poki.com/en/g/venge-io")
-            clear()
-            return
+        # الواجهة الرئيسية (شاشة الترحيب أولاً)
+        self.main_layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
         
-        # الحساب العادي لباقي العمليات الرياضية
-        total = str(eval(expression))
-        equation.set(total)
-        expression = total
-    except:
-        equation.set(" خطأ ")
-        expression = ""
+        self.show_splash_screen()
+        return self.main_layout
 
-def clear():
-    global expression
-    expression = ""
-    equation.set("")
+    def show_splash_screen(self):
+        # شاشة الترحيب والتعريف
+        self.splash_box = BoxLayout(orientation='vertical', spacing=10, padding=[0, 150, 0, 0])
+        
+        title_label = Label(text="ZARD CALCULATOR", font_size='32sp', bold=True, color=(1, 0.28, 0.34, 1))
+        dev_label = Label(text="تم التطوير من قبل ZARD", font_size='20sp', bold=True, color=(1, 1, 1, 1))
+        made_label = Label(text="Made for Mobile", font_size='14sp', italic=True, color=(0.32, 0.36, 0.41, 1))
+        
+        self.splash_box.add_widget(title_label)
+        self.splash_box.add_widget(dev_label)
+        self.splash_box.add_widget(made_label)
+        
+        self.main_layout.add_widget(self.splash_box)
+        
+        # الانتظار ثانيتين ثم الانتقال للآلة الحاسبة
+        Clock.schedule_once(self.start_calculator, 2)
 
-# --- دالة بناء الواجهة الرسومية بعد الترحيب ---
-def show_main_calculator():
-    try:
-        global bg_image
-        bg_image = tk.PhotoImage(file="background.png") 
-        bg_label = tk.Label(app, image=bg_image)
-        bg_label.place(relwidth=1, relheight=1) 
-    except Exception as e:
-        print(f"لم يتم العثور على صورة الخلفية: {e}")
+    def start_calculator(self, dt):
+        self.main_layout.remove_widget(self.splash_box)
+        
+        # شاشة العرض (الـ Entry)
+        self.display = TextInput(
+            font_size='36sp', readonly=True, halign='right', multiline=False,
+            background_color=(0.12, 0.12, 0.12, 1), foreground_color=(1, 0.28, 0.34, 1),
+            size_hint_y=0.2, border=(0,0,0,0)
+        )
+        self.main_layout.add_widget(self.display)
+        
+        # شبكة الأزرار
+        grid = GridLayout(cols=4, spacing=10, size_hint_y=0.8)
+        
+        buttons = [
+            ('7', (0.32, 0.36, 0.41, 1)), ('8', (0.32, 0.36, 0.41, 1)), ('9', (0.32, 0.36, 0.41, 1)), ('/', (0.17, 0.2, 0.21, 1)),
+            ('4', (0.32, 0.36, 0.41, 1)), ('5', (0.32, 0.36, 0.41, 1)), ('6', (0.32, 0.36, 0.41, 1)), ('*', (0.17, 0.2, 0.21, 1)),
+            ('1', (0.32, 0.36, 0.41, 1)), ('2', (0.32, 0.36, 0.41, 1)), ('3', (0.32, 0.36, 0.41, 1)), ('-', (0.17, 0.2, 0.21, 1)),
+            ('C', (1, 0.62, 0.26, 1)),     ('0', (0.32, 0.36, 0.41, 1)), ('=', (1, 0.12, 0.24, 1)),     ('+', (0.17, 0.2, 0.21, 1)),
+        ]
+        
+        for text, color in buttons:
+            btn = Button(
+                text=text, font_size='24sp', bold=True,
+                background_normal='', background_color=color, color=(1,1,1,1)
+            )
+            btn.bind(on_press=self.on_button_press)
+            grid.add_widget(btn)
+            
+        self.main_layout.add_widget(grid)
 
-    # شاشة العرض
-    display_entry = tk.Entry(app, textvariable=equation, font=("Arial", 26, "bold"), bd=5, insertwidth=4, width=14, 
-                              borderwidth=0, justify="right", bg="#1e1e1e", fg="#ff4757")
-    display_entry.grid(columnspan=4, ipady=25, padx=15, pady=30, sticky="nsew")
-
-    # تمدد الشبكة
-    for i in range(4):
-        app.grid_columnconfigure(i, weight=1)
-    for i in range(1, 6):
-        app.grid_rowconfigure(i, weight=1)
-
-    # تصميم الأزرار
-    buttons = [
-        ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
-        ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
-        ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
-        ('C', 4, 0), ('0', 4, 1), ('=', 4, 2), ('+', 4, 3),
-    ]
-
-    button_params = {
-        'font': ("Arial", 18, "bold"),
-        'height': 2,
-        'width': 5,
-        'bd': 0,
-        'relief': 'flat'
-    }
-
-    for (text, row, col) in buttons:
-        if text == '=':
-            action = equalpress
-            bg_color = "#ff1f3d" 
-            fg_color = "white"
-        elif text == 'C':
-            action = clear
-            bg_color = "#ff9f43" 
-            fg_color = "black"
-        elif text in ['+', '-', '*', '/']:
-            action = lambda x=text: press(x)
-            bg_color = "#2d3436" 
-            fg_color = "white"
+    def on_button_press(self, instance):
+        text = instance.text
+        
+        if text == 'C':
+            self.expression = ""
+            self.display.text = ""
+        elif text == '=':
+            self.equal_press()
         else:
-            action = lambda x=text: press(x)
-            bg_color = "#535c68" 
-            fg_color = "white"
+            self.expression += text
+            self.display.text = self.expression
 
-        btn = tk.Button(app, text=text, fg=fg_color, bg=bg_color, **button_params, command=action)
-        btn.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
+    def equal_press(self):
+        try:
+            # المفاجآت الأسطورية بتاعتك!
+            if self.expression == "67":
+                self.display.text = "67..."
+                webbrowser.open("https://youtube.com/shorts/9pnpI-7YmV4?si=r7TnnVZlw10MNosa")
+                self.expression = ""
+                return
+            elif self.expression == "1":
+                self.display.text = "جاري فتح الصورة..."
+                webbrowser.open("https://drive.google.com/file/d/1f9epdADrjGfqvbWRNvnu0bMEzoVQtLBE/view?usp=drivesdk")
+                self.expression = ""
+                return
+            elif self.expression == "2":
+                self.display.text = "Subscribe to Zard"
+                self.expression = ""
+                return
+            elif self.expression == "3":
+                webbrowser.open("https://flappybird.io/")
+                self.expression = ""
+                return
+            elif self.expression == "4":
+                webbrowser.open("https://supermarioplay.com/")
+                self.expression = ""
+                return
+            elif self.expression == "5":
+                webbrowser.open("https://www.retrogames.cc/sega-games/sonic-the-hedgehog-usa-europe.html")
+                self.expression = ""
+                return
+            elif self.expression == "6":
+                webbrowser.open("https://www.google.com/fbx?fbx=pacman")
+                self.expression = ""
+                return
+            elif self.expression == "7":
+                webbrowser.open("https://tetris.com/play-tetris")
+                self.expression = ""
+                return
+            elif self.expression == "8":
+                webbrowser.open("https://poki.com/en/g/dress-up-the-lovely-princess")
+                self.expression = ""
+                return
+            elif self.expression == "9":
+                webbrowser.open("https://www.crazygames.com/game/penalty-shooters-2")
+                self.expression = ""
+                return
+            elif self.expression == "0":
+                webbrowser.open("https://poki.com/en/g/venge-io")
+                self.expression = ""
+                return
 
-# انتظر ثانيتين ثم ابدأ التطبيق
-app.after(2000, start_calculator)
+            # الحساب العادي
+            total = str(eval(self.expression))
+            self.display.text = total
+            self.expression = total
+        except:
+            self.display.text = " خطأ "
+            self.expression = ""
 
-app.wm_attributes("-topmost", True)
-app.mainloop()
+if __name__ == '__main__':
+    ZardCalculatorApp().run()
+        
