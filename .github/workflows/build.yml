@@ -20,13 +20,16 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
-        pip3 install --user --upgrade buildozer cython virtualenv
+        pip3 install --user --upgrade "buildozer<1.6.0" cython virtualenv
 
-    - name: Force Accept SDK License in Spec
+    - name: Force Settings in Spec
       run: |
-        # هذا الأمر يجبر ملف الإعدادات على تفعيل الموافقة التلقائية قبل البناء
+        # إجبار التراخيص والموافقة التلقائية
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
+        # إجبار استخدام نسخة بايثون مستقرة داخل التجميع ومنع نسخ المستقبل التجريبية
+        sed -i 's/#requirements =/requirements =/g' buildozer.spec
+        sed -i 's/requirements = python3,kivy/requirements = python3==3.10.12,kivy/g' buildozer.spec
 
     - name: Build with Buildozer
       run: |
