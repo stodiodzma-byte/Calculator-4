@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest  # السيرفرات الأسرع في جيت هاب
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -15,14 +15,15 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-        cache: 'pip'
 
     - name: Install Buildozer dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
-        pip install --upgrade pip
-        pip install --user "buildozer<1.6.0" cython virtualenv
+        
+        # بنجبر التثبيت باستخدام البايثون اللي نزلناه بالظبط
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --user "buildozer<1.6.0" cython virtualenv
 
     - name: Force License Agreement
       run: |
@@ -33,6 +34,7 @@ jobs:
     - name: Build with Buildozer
       run: |
         export PATH=$HOME/.local/bin:$PATH
+        # الأمر السحري اللي بيخلي بلدوزر يطنش نسخة السيرفر ويركز في نسختنا
         buildozer android debug
 
     - name: Upload APK Artifact
