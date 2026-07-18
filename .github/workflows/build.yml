@@ -6,15 +6,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
 
     - name: Install Buildozer dependencies
       run: |
@@ -22,15 +17,10 @@ jobs:
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
         pip3 install --user --upgrade "buildozer<1.6.0" cython virtualenv
 
-    - name: Force Settings in Spec
+    - name: Force License Agreement
       run: |
-        # تفعيل التراخيص أوتوماتيكياً
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
-        
-        # ضبط المتطلبات ومنع استخدام بايثون التجريبية داخل توزيعة أندرويد
-        sed -i 's/#requirements =/requirements =/g' buildozer.spec
-        sed -i 's/requirements = .*/requirements = python3==3.11.0,kivy==2.3.0/g' buildozer.spec
 
     - name: Build with Buildozer
       run: |
