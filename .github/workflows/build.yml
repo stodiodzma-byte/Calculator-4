@@ -27,9 +27,9 @@ jobs:
         # تفعيل التراخيص أوتوماتيكياً
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
-        # إجبار التجميع على استخدام بايثون 3.11 المتوافقة تماماً مع السيرفر
+        # إرجاع المتطلبات للوضع الطبيعي (python3 الصافية) عشان يربطها بـ hostpython تلقائياً
         sed -i 's/#requirements =/requirements =/g' buildozer.spec
-        sed -i 's/requirements = .*/requirements = python3==3.11.0,kivy/g' buildozer.spec
+        sed -i 's/requirements = .*/requirements = python3,kivy/g' buildozer.spec
 
     - name: Build with Buildozer
       run: |
