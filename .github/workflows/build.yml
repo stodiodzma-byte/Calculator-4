@@ -15,28 +15,30 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
-        update-environment-path: true
+
+    - name: Force System Python Link
+      run: |
+        # هنا بنجبر السيرفر يربط الـ python3 بنسخة 3.10 بالظبط ويمسح أي رابط قديم
+        sudo rm -f /usr/local/bin/python3
+        sudo rm -f /usr/bin/python3
+        sudo ln -s $(which python3) /usr/bin/python3
+        python3 --version  # عشان نتأكد في اللوج إنه قاري 3.10
 
     - name: Install Buildozer dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
-        
-        # التأكد من التثبيت على نسخة 3.10 وتحديث الأدوات
         python3 -m pip install --upgrade pip
         python3 -m pip install --user "buildozer<1.6.0" cython virtualenv
 
-    - name: Force Settings in Spec
+    - name: Force License Agreement
       run: |
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
-        
-        # إجبار التوزيعة على استخدام إصدار مستقر تماماً ومطابق
-        sed -i 's/requirements = .*/requirements = python3==3.10.14,kivy==2.3.0/g' buildozer.spec
+        sed -i 's/requirements = .*/requirements = python3,kivy/g' buildozer.spec
 
     - name: Build with Buildozer
       run: |
-        # إجبار البيئة على مسار بايثون 3.10 النظيف
         export PATH=$HOME/.local/bin:$PATH
         buildozer android debug
 
