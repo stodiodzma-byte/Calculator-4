@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
     - name: Install Buildozer dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev tk-dev libgdbm-compat-dev libreoffice-dev libxml2-dev libxslt1-dev
         pip3 install --user --upgrade "buildozer<1.6.0" cython virtualenv
 
     - name: Force Settings in Spec
@@ -27,7 +27,7 @@ jobs:
         # تفعيل التراخيص أوتوماتيكياً
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
-        # إرجاع المتطلبات للوضع الطبيعي (python3 الصافية) عشان يربطها بـ hostpython تلقائياً
+        # ضبط المتطلبات بالشكل الصحيح والمستقر تماماً
         sed -i 's/#requirements =/requirements =/g' buildozer.spec
         sed -i 's/requirements = .*/requirements = python3,kivy/g' buildozer.spec
 
