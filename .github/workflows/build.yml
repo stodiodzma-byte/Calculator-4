@@ -27,9 +27,10 @@ jobs:
         # تفعيل التراخيص أوتوماتيكياً
         sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         sed -i 's/# android.accept_sdk_license = True/android.accept_sdk_license = True/g' buildozer.spec
-        # ضبط المتطلبات بالشكل الصحيح والمستقر تماماً
+        
+        # ضبط المتطلبات ومنع استخدام بايثون التجريبية داخل توزيعة أندرويد
         sed -i 's/#requirements =/requirements =/g' buildozer.spec
-        sed -i 's/requirements = .*/requirements = python3,kivy/g' buildozer.spec
+        sed -i 's/requirements = .*/requirements = python3==3.11.0,kivy==2.3.0/g' buildozer.spec
 
     - name: Build with Buildozer
       run: |
