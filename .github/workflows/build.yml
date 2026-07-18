@@ -25,12 +25,11 @@ jobs:
     - name: Accept Android Licenses Officially
       run: |
         export PATH=$PATH:~/.local/bin
-        # هذا الأمر الرسمي للموافقة على كل رخص الأندرويد مسبقاً
         yes | buildozer android licenses
 
     - name: Build with Buildozer
       run: |
-        export PATH=$PATH:~/.local/bin
+        export PATH=$PATH:~ :/.local/bin
         buildozer android debug
 
     - name: Upload APK Artifact
